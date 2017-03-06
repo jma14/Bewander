@@ -1,0 +1,49 @@
+﻿@model Bewander.ViewModels.MessageNotificationViewModel
+@using Microsoft.AspNet.Identity
+
+
+<li id="messages-nav-icon" rel="toggle" role="button" class="dropdown" onclick="removeMsgIcon()"> @*Messages envelope icon is controlled using bootstrap.js dropdown- Corey D*@
+     <a class="dropdown-toggle" data-toggle="dropdown" role="button" > @*The Messages envelope icon is always on the nav bar- Corey D*@
+            <i class="fa fa-envelope fa-2x"></i>
+         </a>
+        @if (Model.Messages.Count() != 0)
+        {
+            <div id="messages-notification">@Model.Messages.Count()</div>
+        }else
+        {
+            <script>
+                var element = document.getElementById("messages-notification");
+                element.remove();
+            </script>
+        }
+        <ul id="message-list" class="dropdown-menu nav-list">
+            <li><h5>Messages</h5></li>
+            @if (Model.Messages.Count() != 0)
+            {
+                foreach (var item in Model.Messages.OrderByDescending(i => i.DateTime))
+                {
+                    <li class="message-item" relID="@item.RelationshipID" onclick="SelectUser('@item.RelationshipID')">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <img src="../Images/no-image.png" onclick="ViewProfile()" />
+                            </div>
+                            <div class="col-sm-9">
+                                <h4>@Model.getSenderName(item)</h4>
+                                <p>@item.Content &nbsp;&nbsp;&nbsp;&nbsp;<sub>sent at @item.DateTime</sub></p>
+                            </div>
+                        </div>
+                    </li>
+                }
+            }
+            <!-- Three  more items in the messages dropdown menu -->
+            <li><h5>@Html.ActionLink("Inbox", "Inbox", "Users", new { userID = User.Identity.GetUserId()}, null)</h5></li>
+        </ul>
+    </li>
+
+<script>
+    function removeMsgIcon() {
+        var element = document.getElementById("messages-notification");
+        element.remove();
+    }
+</script>
+

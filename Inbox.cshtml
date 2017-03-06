@@ -1,0 +1,216 @@
+﻿@model Bewander.ViewModels.InboxViewModel
+@{
+    ViewBag.Title = "Inbox";
+}
+
+<!--End container from _Layout ### shows no starting tag because it starts on _Layout-->
+</div>
+
+<!--Create full container for background image-->
+<div class="full-container profile-background" id="cover-photo" style="width:100%;height:100%;background: url(../../Images/@Model.CoverPhotoPath) no-repeat 50% 50% fixed;background-size: cover;-moz-background-size: cover;-o-background-size: cover;-webkit-background-size: cover;" alt="@Model.CoverPhotoName" ></div>
+
+<!--Start new container ### shows no ending tag because it's on _Layout-->
+<div class="container-fluid body-content" id="profile-body">
+
+    <div class="header-container">
+        <img src="~/Images/@Model.ProfilePicturePath" id="profile-picture" alt="@Model.ProfilePictureName" class="btn btn-default btn-image-action" href="#lightbox" data-toggle="modal" />
+        <br />
+        @if (Model.CurrentUserID != Model.UserID)
+        {
+            if ((int)Model.RelationshipStatus == 4)
+            {
+                <button id="add-friend-btn" style="margin-left:140px;" onclick="AddFriend('@Model.UserID')">Add Friend</button>
+            }
+            else if (Model.RelationshipStatus == 0)
+            {
+                <button id="add-friend-btn" style="margin-left:148px;">Pending</button>
+            }
+            else
+            {
+                <button id="add-friend-btn" style="margin-left:150px;" disabled>Wanderers</button>
+            }
+            <button id="send-message-btn" onclick="SelectUser('@Model.RelationshipID', '@Model.UserID')">Message</button>
+        }
+    </div>
+
+    
+    
+    <hr />
+    <!-- Nav tabs -->
+    <div style="padding-top:15%; margin-bottom:5%;">
+        <div id="navbar-tabs" style="border-radius:10px">
+            <div id="logo">
+                <div class="row">
+                    <div class="col-sm-4 col-sm-offset-4">
+                        <img src="~/Images/Global/logo.png" id="bewander-logo" style="height:75px" />
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3" style="float:left; width:20%">
+                    <ul class="nav nav-pills nav-stacked" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" href="#inbox-list" role="tab"><i class="fa fa-inbox fa-3x"></i><br /><font>Inbox</font></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#reviews-list" role="tab"><i class="fa fa-globe fa-3x"></i><br /><font>Reviews</font></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#posts-list" role="tab"><i class="fa fa-envelope fa-3x"></i><br /><font>Messages</font></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#friend-list" role="tab"><i class="fa fa-users fa-3x"></i><br /><font>Wanderers</font></a>
+                        </li>
+                    </ul>
+                </div>
+
+                    <div class="col-sm-3">
+                        <div id="content-list-container">
+                            <div class="tab-pane fade in active" id="inbox-list">
+                                <table class="table table-bordered table-hover">
+                                    <tr>
+                                        <th style="text-align:center">Type</th>
+                                        <th style="text-align:center">ID</th>
+                                    </tr>
+                                    @foreach (var review in Model.Reviews)
+                                    {
+                                        <tr>
+                                            <td>Review</td>
+                                            <td><a class="nav-link" data-toggle="tab" role="tab" href='@String.Format("#Review{0}",review.ReviewID)'>@review.Title</a></td>
+                                        </tr>
+                                    }
+                                    @foreach (var post in Model.Posts)
+                                    {
+                                        <tr>
+                                            <td>Message</td>
+                                            <td><a class="nav-link" data-toggle="tab" role="tab" href='@String.Format("#Post{0}",post.ID)'>@post.Caption</a></td>
+                                        </tr>
+                                    }
+                                    @foreach (var friend in Model.Friends)
+                                    {
+                                        var fr = friend.UserOneID == Model.UserID ? friend.UserTwoID : friend.UserOneID;
+                                        <tr>
+                                            <td>Wanderer</td>
+                                            <td><a class="nav-link" data-toggle="tab" role="tab" href='@String.Format("#Friend{0}",fr)'>@fr</a></td>
+                                        </tr>
+                                    }
+                                </table>
+                            </div>
+                            <div class="tab-pane fade" id="reviews-list">
+                                <table class="table table-bordered table-hover">
+                                    <tr>
+                                        <th style="text-align:center">Review Title</th>
+                                    </tr>
+                                    @foreach (var review in Model.Reviews)
+                                    {
+                                        <tr>
+                                            <td><a class="nav-link" data-toggle="tab" role="tab" href='@String.Format("#Review{0}",review.ReviewID)'>@review.Title</a></td>
+                                        </tr>
+                                    }
+                                </table>
+                            </div>
+
+                            <div class="tab-pane fade" id="posts-list">
+                                <table class="table table-bordered table-hover">
+                                    <tr>
+                                        <th style="text-align:center">Messages</th>
+                                    </tr>
+                                    @foreach (var post in Model.Posts)
+                                    {
+                                        <tr>
+                                            <td><a class="nav-link" data-toggle="tab" role="tab" href='@String.Format("#Post{0}",post.ID)'>@post.Caption</a></td>
+                                        </tr>
+                                    }
+                                </table>
+                            </div>
+
+                            <div class="tab-pane fade" id="friend-list">
+                                <table class="table table-bordered table-hover">
+                                    <tr>
+                                        <th style="text-align:center">Wanderer ID</th>
+                                    </tr>
+                                    @foreach (var friend in Model.Friends)
+                                    {
+                                        var fr = friend.UserOneID == Model.UserID ? friend.UserTwoID : friend.UserOneID;
+                                        <tr>
+                                            <td><a class="nav-link" data-toggle="tab" role="tab" href='@String.Format("#Friend{0}",fr)'>@fr</a></td>
+                                        </tr>
+                                    }
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-5">
+                        <div id="inbox-item-container">
+
+                            @foreach (var review in Model.Reviews)
+                            {
+                                string place = "Unknown Place";
+                                try
+                                {
+                                    place = Model.Places.FirstOrDefault(p => p.PlaceID == review.PlaceID).Name;
+                                }
+                                catch(Exception e)
+                                {
+                                    throw e;
+                                }
+                                <div class="tab-pane fade" id="@String.Format("Review{0}", review.ReviewID)">
+                                    <table class="table table-bordered">
+                                        <tr>
+                                            <th style="text-align:center">Title</th>
+                                            <th style="text-align:center">Place</th>
+                                            <th style="text-align:center">Stars</th>
+                                        </tr>
+                                        <tr>
+                                            <td>@review.Title</td>
+                                            <td>@place</td>
+                                            <td>@review.StarRating</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="3">@review.Body</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            }
+
+                            @foreach (var post in Model.Posts)
+                            {
+                                <div class="tab-pane fade" id="@String.Format("Post{0}", post.ID)">
+                                    <table class="table table-bordered">
+                                        <tr>
+                                            <th style="text-align:center">Post ID</th>
+                                            <th style="text-align:center">Date Posted</th>
+                                        </tr>
+                                        <tr>
+                                            <td>@post.ID</td>
+                                            <td>@post.DatePosted</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2">@post.Caption</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            }
+
+                            @foreach (var friend in Model.Friends)
+                            {
+                                var fr = friend.UserOneID == Model.UserID ? friend.UserTwoID : friend.UserOneID;
+                                <div class="tab-pane fade" id="@String.Format("Friend{0}", fr)">
+                                    <table class="table table-bordered">
+                                        <tr>
+                                            <th style="text-align:center">Wanderer ID</th>
+                                        </tr>
+                                        <tr>
+                                            <td>@fr</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            }
+                        </div>
+
+
+                </div>
+            </div>
+        </div> 
+    
