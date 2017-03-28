@@ -5,7 +5,7 @@ Inbox.cshtml - entire view file
 
 InboxViewModel.cshtml - entire viewmodel file
 
-_MessagesNave.cshtml - functionality for getting to Inbox view
+_MessagesNav.cshtml - functionality for getting to Inbox view
 
 UsersController.cs - ActionLink for Inbox - get information needed from
 databases to send through to Inbox view
